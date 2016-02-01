@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html ng-app="taskApp" lang="en">
+	<head>
+		<!-- Sets characters to English -->
+		<meta charset="UTF-8">
+		<!-- oldIE -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<!-- Sets initial size of page -->
+    	<meta name="viewport" content="width=device-width, initial-scale=1">
+    	<!-- Shows up in search engine results -->
+    	<meta name="description" content="An app to add messages">
+    	<!-- Attributes site to creator -->
+    	<meta name="author" content="Craig O. Curtis">
+    	<!-- Displays in web browser tab -->
+		<title>Task Completion App</title>
+		<!-- Makes all content cross-Browser-friendly -->
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css" rel="stylesheet" type="text/css" />
+		<!-- Bootstrap default styles -->
+		<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+		<!-- Angular Magic -->
+		<script src="js/angular.min.js"></script>
+		<!-- 
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js"></script> -->
+
+		<script>
+			// must make variable app task THE SAME AS the ng-app task! 
+			var taskApp = angular.module('taskApp', []);
+			taskApp.controller('TaskCtrl', function($scope){
+				$scope.tasks = [
+					'do the laundry',
+					'buy bananas',
+					'do the dishes',
+					'mow the lawn' ];
+				$scope.removedTasks = []; // added this
+				$scope.completedTasks = []; // added this
+				$scope.date = new Date();
+
+				$scope.addTask = function() {
+					// also need to get new date and time stamp it on item
+					$scope.tasks.unshift($scope.enteredTask);
+					$scope.enteredTask = "";
+				};
+
+				$scope.removeTask = function(task){
+					var i = $scope.tasks.indexOf(task);
+					$scope.tasks.splice(i, 1);
+					
+					$scope.removedTasks.unshift(task + " DELETED AT " + $scope.date);
+				};
+
+				$scope.completeTask = function(task){
+					var j = $scope.tasks.indexOf(task);
+					$scope.tasks.splice(j, 1);
+					$scope.completedTasks.unshift(task + " COMPLETED AT " + new Date());
+				};
+			});
+		</script>
+
+	</head>
+	<body ng-controller="TaskCtrl">
+		<div class="container-fluid">
+			 <div class="row">
+				<div class="col-xs-12 jumbotron">
+					<form ng-submit="addTask()">
+						<input type="text" ng-model="enteredTask" class="form-control" placeholder="Enter task">
+						<input type="submit" class="form-control btn-primary" value="Add">
+					</form>
+					<ul style="padding: 0;">
+						<li class="list-group-item btn text-primary" data-toggle="tooltip" ng-repeat="task in tasks" title="Created {{ date | date: 'short' }}">
+							{{ task }}
+
+							<button class="btn btn-xs btn-success pull-left" ng-click="completeTask(task)"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button> <!-- added completeTask(task) function -->
+
+							<button class="btn btn-xs btn-danger pull-right" ng-click="removeTask(task)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button> <!-- altered removeTask(task) function  -- even though it still works without the task param... -->
+
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-xs-12 jumbotron btn-success">
+					<h3>Completed</h3>
+					<ul class="completed">
+						<li class="list-group-item text-success text-center" ng-repeat="task in completedTasks"> {{ task }} </li> <!-- altered this -->
+					</ul>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-xs-12 jumbotron btn-danger">
+					<h3>Deleted</h3>
+					<ul class="removed">
+						<li class="list-group-item text-danger text-center" ng-repeat="task in removedTasks"> {{ task }} </li> <!-- altered this -->
+					</ul>
+				</div>
+			</div>
+
+		</div>
+	</body>
+	<!-- from http://jsfiddle.net/8qv1Lpcj/3/ -->
+</html>
